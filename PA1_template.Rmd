@@ -121,5 +121,3 @@ g <- g + theme_bw() + theme(axis.text.x = element_text(angle=45), panel.grid.maj
     panel.background = element_blank(), axis.line = element_line(colour = "black"))
 g
 ```
-
-rm(list=ls())
