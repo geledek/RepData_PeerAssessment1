@@ -6,6 +6,7 @@
 
 ```r
 require(data.table)
+require(ggplot2)
 dt <- fread("activity.csv")
 ```
 
@@ -16,9 +17,12 @@ dt <- fread("activity.csv")
 
 ```r
 step_per_day <- aggregate(steps ~ date, dt, sum)
-library(ggplot2)
+
 g <- ggplot(step_per_day, aes(x=steps))
-g + geom_histogram()
+g <- g + geom_histogram()
+g <- g + scale_y_continuous(breaks=seq(0,9,1))
+g <- g + theme_bw()
+g
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
@@ -45,7 +49,15 @@ median(step_per_day$steps)
 
 ```r
 step_avg <- aggregate(steps ~ interval, dt, mean)
-plot(x = step_avg$interval, y = step_avg$steps, type = "l", xlab = "time", ylab = "number of steps", main = "average number of steps taken in 5-minute interval across all days")
+
+g <- ggplot(step_avg, aes(x=interval, y=steps))
+g <- g + geom_line()
+g <- g + scale_x_continuous(name="time", 
+                            breaks = seq(0,2300,by=100),
+                            labels = c(paste(seq(from=0, to=11),"AM", sep=""), "NOON", paste(seq(from=1, to=11),"PM", sep="")))
+g <- g + theme_bw() + theme(axis.text.x = element_text(angle=45), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+    panel.background = element_blank(), axis.line = element_line(colour = "black"))
+g
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
@@ -97,7 +109,12 @@ Make a histogram of the total number of steps taken each day and Calculate and r
 
 ```r
 new_step_per_day <- aggregate(steps ~ date, new_dt, sum)
-hist(new_step_per_day$steps, xlab = "number of steps", main = "Total number of steps taken each day")
+
+g <- ggplot(new_step_per_day, aes(x=steps))
+g <- g + geom_histogram()
+g <- g + scale_y_continuous(breaks=seq(0,12,2))
+g <- g + theme_bw()
+g
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
@@ -136,10 +153,16 @@ Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minut
 ```r
 new_dt$weekday <- as.factor(new_dt$weekday)
 new_step_interval <- aggregate(steps ~ interval+weekday, new_dt, mean)
-library(ggplot2)
-qplot(interval, steps, data=new_step_interval, geom=c("line"),
+
+g <- qplot(interval, steps, data=new_step_interval, geom=c("line"),
       xlab="Interval", ylab="Number of steps", mean="") + 
       facet_wrap(~weekday, ncol=1)
+g <- g <- g + scale_x_continuous(name="time", 
+                            breaks = seq(0,2300,by=100),
+                            labels = c(paste(seq(from=0, to=11),"AM", sep=""), "NOON", paste(seq(from=1, to=11),"PM", sep="")))
+g <- g + theme_bw() + theme(axis.text.x = element_text(angle=45), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+    panel.background = element_blank(), axis.line = element_line(colour = "black"))
+g
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
